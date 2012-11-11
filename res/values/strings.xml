@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Loading Widget...</string>
+    <string name="app_name">Word Clock</string>
+    <string-array name="ColourValues">
+        <item>#FFFFFF</item>
+        <item>#000000</item>
+        <item>#FF0000</item>
+    </string-array>
+    <string-array name="ColourNames">
+        <item>White</item>
+        <item>Black</item>
+        <item>Red</item>
+    </string-array>
+    <string name="FontColor">#FFFFFF</string>
+</resources>
