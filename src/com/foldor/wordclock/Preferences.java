@@ -38,6 +38,7 @@ public class Preferences extends PreferenceActivity {
 					
 					result.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id);
 					setResult(RESULT_OK, result);
+					
 															
 					sendBroadcast(new Intent(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_ENABLED, Uri.EMPTY, this, WordClockReceiver.class));
 				}
