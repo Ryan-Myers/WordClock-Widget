@@ -7,6 +7,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -20,7 +21,10 @@ public class WordClockReceiver extends AppWidgetProvider {
     //Log Tag.
     private static final String TAG = "WordClock";
     
-    //Create new intents
+    /**
+     * Add time changed events.
+     * ACTION_TIME_TICK, ACTION_TIMEZONE_CHANGED, ACTION_TIME_CHANGED
+     */
     private final static IntentFilter sIntentFilter;
     static {
         sIntentFilter = new IntentFilter();
@@ -29,43 +33,45 @@ public class WordClockReceiver extends AppWidgetProvider {
         sIntentFilter.addAction(Intent.ACTION_TIME_CHANGED);
     }
     
-     @Override
-     public void onEnabled(Context context) {
-         context.getApplicationContext().registerReceiver(mTimeChangedReceiver, sIntentFilter);
-         super.onEnabled(context);
-     }
-        
-     @Override
-     public void onDisabled(Context context) {
-         context.getApplicationContext().unregisterReceiver(mTimeChangedReceiver);
-         super.onDisabled(context);
-     }
+    /**
+     * Registers the mTimeChangedReceiver function with the sIntentFilter for changing the time.
+     * {@inheritDoc}
+     */
+    @Override
+    public void onEnabled(Context context) {
+        context.getApplicationContext().registerReceiver(mTimeChangedReceiver, sIntentFilter);
+        super.onEnabled(context);
+    }
     
+    /**
+     * Updates the widget with the current time.
+     *  {@inheritDoc}
+     */
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.d(TAG, "onUpdate");
-        Log.d(TAG, "Context=" + context.toString());
-
         updateAppWidget(context, appWidgetManager, appWidgetIds);
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
-
+    
+    /**
+     * Updates the widget text with the current time when the intent is update/enabled.
+     * {@inheritDoc}
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
-        super.onReceive(context, intent);
-        
         final String action = intent.getAction();
-        Log.d(TAG, "onReceive");
-        Log.d(TAG, "intent=" + intent.toString() + "; Context=" + context.toString());
         
         if (action.equals(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE) ||
             action.equals(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_ENABLED)) {
             
+        	Context appContext = context.getApplicationContext();
+            AppWidgetManager appWM = AppWidgetManager.getInstance(appContext);
+            
             //Update the Widget text.
-            AppWidgetManager appWM = AppWidgetManager.getInstance(context);
-            Log.d(TAG, "Manager=" + appWM.toString());
-            updateAppWidget(context, appWM, appWM.getAppWidgetIds(intent.getComponent()));
+            updateAppWidget(appContext, appWM, appWM.getAppWidgetIds(intent.getComponent()));
         }
+
+        super.onReceive(context, intent);
     }
     
     /**
@@ -74,7 +80,7 @@ public class WordClockReceiver extends AppWidgetProvider {
      * @param appWM
      * @param appWidgetIds
      */
-    public static void updateAppWidget(Context context, AppWidgetManager appWM, int[] appWidgetIds) {
+    public static void updateAppWidget(Context context, AppWidgetManager appWM, int[] appWidgetIds) {    	
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWM, appWidgetId);
         }
@@ -99,14 +105,14 @@ public class WordClockReceiver extends AppWidgetProvider {
      * @param appWidgetId
      * @return An updated view of the widget.
      */
-    protected static RemoteViews buildAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        Log.d(TAG, "Creating widget: " + appWidgetId);
-        
+    protected static RemoteViews buildAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {    
+    	//TODO: Try to remember what this code even does... (In my defense it's been months)
         AppWidgetProviderInfo providerInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
         int layoutId = (providerInfo == null) ? R.layout.main : providerInfo.initialLayout;
         
         RemoteViews views = new RemoteViews(context.getPackageName(), layoutId);
         
+        //Set the text to the time.
         views.setTextViewText(R.id.wordclock, getTime());
         
         //Grab the FontColor Shared Preference and use it to update the font color of the textview.
@@ -115,6 +121,7 @@ public class WordClockReceiver extends AppWidgetProvider {
         
         views.setTextColor(R.id.wordclock, Color.parseColor(FontColor));
         
+        //Create the onClick event.
         Intent intent = new Intent(context, Preferences.class);
         PendingIntent pendingIntent;
         
@@ -129,14 +136,19 @@ public class WordClockReceiver extends AppWidgetProvider {
      * when the Widget is destroyed.
      */
     private final BroadcastReceiver mTimeChangedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "TimeChangedReceiver Context=" + context.toString());
-            
+        /**
+         * Updates the widget text with the time every minute.
+         * {@inheritDoc}
+         */
+    	@Override
+        public void onReceive(Context context, Intent intent) {            
+            //ComponentName thisWidget = new ComponentName(context, this.getClass());
+            //TODO: Make this more dynamic.
+            ComponentName component = new ComponentName(context, "com.foldor.wordclock.WordClockReceiver");
             AppWidgetManager appWM = AppWidgetManager.getInstance(context);
-            updateAppWidget(context, appWM, appWM.getAppWidgetIds(intent.getComponent()));
             
-            Log.d(TAG, "Manager=" + appWM.toString());
+            //Update the widget with the new time.
+            updateAppWidget(context, appWM, appWM.getAppWidgetIds(component));
         }
     };
     
@@ -164,8 +176,6 @@ public class WordClockReceiver extends AppWidgetProvider {
         time += NumberToWords.get(appminutes);
         time += " in the ";
         time += (now.getHours() >= 12) ? "Afternoon" : "Morning";
-        
-        //Log.d(TAG, time);
         
         return time;
     }

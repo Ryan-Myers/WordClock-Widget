@@ -13,7 +13,7 @@
            <meta-data android:name="android.appwidget.provider"
                       android:resource="@xml/widget" />
         </receiver>
-        <activity android:name="Preferences" android:exported="false">
+        <activity android:name="Preferences" android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"></action>
             </intent-filter>
