@@ -18,9 +18,8 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 public class WordClockReceiver extends AppWidgetProvider {
-    //Log Tag.
     private static final String TAG = "WordClock";
-
+    
     /**
      * Add time changed events.
      * ACTION_TIME_TICK, ACTION_TIMEZONE_CHANGED, ACTION_TIME_CHANGED
@@ -32,7 +31,7 @@ public class WordClockReceiver extends AppWidgetProvider {
         sIntentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
         sIntentFilter.addAction(Intent.ACTION_TIME_CHANGED);
     }
-
+    
     /**
      * Registers the mTimeChangedReceiver function with the sIntentFilter for changing the time.
      * {@inheritDoc}
@@ -42,7 +41,7 @@ public class WordClockReceiver extends AppWidgetProvider {
         context.getApplicationContext().registerReceiver(mTimeChangedReceiver, sIntentFilter);
         super.onEnabled(context);
     }
-
+    
     /**
      * Updates the widget with the current time.
      *  {@inheritDoc}
@@ -52,7 +51,7 @@ public class WordClockReceiver extends AppWidgetProvider {
         updateAppWidget(context, appWM, appWidgetIds);
         super.onUpdate(context, appWM, appWidgetIds);
     }
-
+    
     /**
      * Updates the widget text with the current time when the intent is updated/enabled.
      * {@inheritDoc}
@@ -60,20 +59,19 @@ public class WordClockReceiver extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
-
+        
         if (action.equals(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE) || 
             action.equals(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_ENABLED)) {
             
-            Context appContext = context.getApplicationContext();
-            AppWidgetManager appWM = AppWidgetManager.getInstance(appContext);
-
+            AppWidgetManager appWM = AppWidgetManager.getInstance(context);
+            
             //Update the Widget text.
-            updateAppWidget(appContext, appWM, appWM.getAppWidgetIds(intent.getComponent()));
+            updateAppWidget(context, appWM, appWM.getAppWidgetIds(intent.getComponent()));
         }
-
+        
         super.onReceive(context, intent);
     }
-
+    
     /**
      * This will update the passed widgets with the current time in English. Runs updateAppWidget for each appWidgetIds value.
      * @param context
@@ -85,7 +83,7 @@ public class WordClockReceiver extends AppWidgetProvider {
             updateAppWidget(context, appWM, appWidgetId);
         }
     }
-
+    
     /**
      * This will update the passed widget view with the current time in English.
      * @param context
@@ -102,7 +100,7 @@ public class WordClockReceiver extends AppWidgetProvider {
             Log.d(TAG, "updateAppWidget is NULL! ID: " + appWidgetId);
         }
     }
-
+    
     /**
      * This will creates the view with the current time in English, and set up the onClick activity for launching the Preferences Activity.
      * @param context
@@ -110,35 +108,35 @@ public class WordClockReceiver extends AppWidgetProvider {
      * @param appWidgetId
      * @return An updated view of the widget.
      */
-    protected static RemoteViews buildAppWidget(Context context, AppWidgetManager appWM, int appWidgetId) {        
+    protected static RemoteViews buildAppWidget(Context context, AppWidgetManager appWM, int appWidgetId) {
         //Checks to see if the layout has changed from the default.
         AppWidgetProviderInfo providerInfo = appWM.getAppWidgetInfo(appWidgetId);
         int layoutId = (providerInfo == null) ? R.layout.main : providerInfo.initialLayout;
-
+        
         RemoteViews views = new RemoteViews(context.getPackageName(), layoutId);
-
+        
         //Set the text to the time.
         views.setTextViewText(R.id.wordclock, getTime());
-
+        
         //Grab the FontColor Shared Preference and use it to update the font color of the textview.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String FontColor = prefs.getString("FontColor", "#FFFFFF");
-
+        
         views.setTextColor(R.id.wordclock, Color.parseColor(FontColor));
-
+        
         //Create the Intent to configure preferences.
         Intent prefsIntent = new Intent(context, Preferences.class);
         prefsIntent.setAction("android.appwidget.action.APPWIDGET_CONFIGURE");
         prefsIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-
+        
         PendingIntent prefsPendingIntent = PendingIntent.getActivity(context, 0, prefsIntent, 0);
-
+        
         //Create the onClick event to load the preferences.
         views.setOnClickPendingIntent(R.id.wordclock, prefsPendingIntent);
-
+        
         return views;
     }
-
+    
     /**
      * Automatically registered when the Widget is created, and unregistered
      * when the Widget is destroyed.
@@ -154,12 +152,12 @@ public class WordClockReceiver extends AppWidgetProvider {
             //TODO: Make this more dynamic.
             ComponentName component = new ComponentName(context, "com.foldor.wordclock.WordClockReceiver");
             AppWidgetManager appWM = AppWidgetManager.getInstance(context);
-
+            
             //Update the widget with the new time.
             updateAppWidget(context, appWM, appWM.getAppWidgetIds(component));
         }
     };
-
+    
     /**
      * Gets the time in English
      * Format: It's Twelve Thirty-Six in the Afternoon
@@ -168,25 +166,21 @@ public class WordClockReceiver extends AppWidgetProvider {
     public static String getTime() {
         Date now = new Date();
         String time;
-
+        
         //HOURS
         int apphours = now.getHours() % 12; //Get this in a twelve hour format.
         if (apphours == 0) apphours = 12; //If it's zero then it's midnight or noon.
-
+            
         //MINUTES
         int appminutes = now.getMinutes();
-
-        //TIME 
-        //Format: It's Twelve Thirty-Six in the Afternoon
-        //Format: It's One O'Six in the Morning
+        
+        //TIME
         time = "It's " + NumberToWords.get(apphours) + " ";
         if (appminutes < 10 && appminutes != 0) time += "O'"; //Add O' to the minutes if it's less than 10, but not zero.
         time += NumberToWords.get(appminutes);
         time += " in the ";
         time += (now.getHours() >= 12) ? "Afternoon" : "Morning";
-
-        Log.d(TAG, time);
-
+        
         return time;
     }
 }

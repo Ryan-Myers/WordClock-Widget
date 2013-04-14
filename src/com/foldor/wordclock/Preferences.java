@@ -11,13 +11,13 @@ import android.view.KeyEvent;
 public class Preferences extends PreferenceActivity {
     private static final String TAG = "WordClock";
     private static String CONFIGURE_ACTION = "android.appwidget.action.APPWIDGET_CONFIGURE";
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
     }
-
+    
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -25,19 +25,19 @@ public class Preferences extends PreferenceActivity {
             
             if (CONFIGURE_ACTION.equals(activityIntent.getAction())) {
                 Bundle extras = activityIntent.getExtras();
-
+                
                 if (extras != null) {
                     int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-
+                    
                     //Put the widget ID into the extras and let the activity caller know the result is ok.
                     Intent result = new Intent();
                     result.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-
+                    
                     setResult(RESULT_OK, result);
-
+                    
                     //Start the widget timer.
-                    Intent enableWidget = new Intent(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_ENABLED, 
-                                                    Uri.EMPTY, this, WordClockReceiver.class);
+                    Intent enableWidget = new Intent(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_ENABLED, Uri.EMPTY, this,
+                            WordClockReceiver.class);
                     
                     sendBroadcast(enableWidget);
                 }
@@ -49,7 +49,7 @@ public class Preferences extends PreferenceActivity {
                 Log.d(TAG, "Intent Action is: {" + activityIntent.getAction() + "} and not: " + CONFIGURE_ACTION);
             }
         }
-
+        
         return (super.onKeyDown(keyCode, event));
     }
 }
