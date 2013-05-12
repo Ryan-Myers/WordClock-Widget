@@ -30,6 +30,8 @@ public class WordClockReceiver extends AppWidgetProvider {
         sIntentFilter.addAction(Intent.ACTION_TIME_TICK);
         sIntentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
         sIntentFilter.addAction(Intent.ACTION_TIME_CHANGED);
+        sIntentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        sIntentFilter.addAction(Intent.ACTION_SCREEN_OFF);
     }
     
     /**
@@ -44,7 +46,7 @@ public class WordClockReceiver extends AppWidgetProvider {
     
     /**
      * Updates the widget with the current time.
-     *  {@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     public void onUpdate(Context context, AppWidgetManager appWM, int[] appWidgetIds) {
@@ -58,6 +60,7 @@ public class WordClockReceiver extends AppWidgetProvider {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, "OnReceive: " + getTime());
         final String action = intent.getAction();
         
         if (action.equals(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE) || 
@@ -148,6 +151,7 @@ public class WordClockReceiver extends AppWidgetProvider {
          */
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "INTENT: " + intent.toString());
             //ComponentName thisWidget = new ComponentName(context, this.getClass());
             //TODO: Make this more dynamic.
             ComponentName component = new ComponentName(context, "com.foldor.wordclock.WordClockReceiver");
