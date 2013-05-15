@@ -3,6 +3,7 @@ package com.foldor.wordclock;
 import java.util.Date;
 
 import android.app.PendingIntent;
+import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.appwidget.AppWidgetProviderInfo;
@@ -13,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -30,8 +32,6 @@ public class WordClockReceiver extends AppWidgetProvider {
         sIntentFilter.addAction(Intent.ACTION_TIME_TICK);
         sIntentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
         sIntentFilter.addAction(Intent.ACTION_TIME_CHANGED);
-        sIntentFilter.addAction(Intent.ACTION_SCREEN_ON);
-        sIntentFilter.addAction(Intent.ACTION_SCREEN_OFF);
     }
     
     /**
@@ -40,8 +40,14 @@ public class WordClockReceiver extends AppWidgetProvider {
      */
     @Override
     public void onEnabled(Context context) {
-        context.getApplicationContext().registerReceiver(mTimeChangedReceiver, sIntentFilter);
+        context.startService(new Intent(context, UpdateService.class));
         super.onEnabled(context);
+    }
+    
+    @Override
+    public void onDisabled(Context context) {
+        context.stopService(new Intent(context, UpdateService.class));
+        super.onDisabled(context);
     }
     
     /**
@@ -60,7 +66,6 @@ public class WordClockReceiver extends AppWidgetProvider {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "OnReceive: " + getTime());
         final String action = intent.getAction();
         
         if (action.equals(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE) || 
@@ -144,14 +149,13 @@ public class WordClockReceiver extends AppWidgetProvider {
      * Automatically registered when the Widget is created, and unregistered
      * when the Widget is destroyed.
      */
-    private final BroadcastReceiver mTimeChangedReceiver = new BroadcastReceiver() {
+    private final static BroadcastReceiver mTimeChangedReceiver = new BroadcastReceiver() {
         /**
          * Updates the widget text with the time every minute.
          * {@inheritDoc}
          */
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "INTENT: " + intent.toString());
             //ComponentName thisWidget = new ComponentName(context, this.getClass());
             //TODO: Make this more dynamic.
             ComponentName component = new ComponentName(context, "com.foldor.wordclock.WordClockReceiver");
@@ -159,6 +163,37 @@ public class WordClockReceiver extends AppWidgetProvider {
             
             //Update the widget with the new time.
             updateAppWidget(context, appWM, appWM.getAppWidgetIds(component));
+        }
+    };
+    
+    /**
+     * Create a Service to keep the mTimeChangedReceiver from being silently killed by the Android OS.
+     */
+    public static final class UpdateService extends Service {
+        /**
+         * This is necessary to extend the Service Class
+         */
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
+        
+        /**
+         * Register the mTimeChangedReceiver when the widget is created.
+         */
+        @Override
+        public void onCreate() {
+            registerReceiver(mTimeChangedReceiver, sIntentFilter);
+            super.onCreate();
+        }
+        
+        /**
+         * Unregister the mTimeChangedReceiver when the widget is deleted.
+         */
+        @Override
+        public void onDestroy() {
+            unregisterReceiver(mTimeChangedReceiver);
+            super.onDestroy();
         }
     };
     
