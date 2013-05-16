@@ -12,6 +12,7 @@ public class Preferences extends PreferenceActivity {
     private static final String TAG = "WordClock";
     private static final String CONFIGURE_ACTION = "android.appwidget.action.APPWIDGET_CONFIGURE";
     
+    @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,6 +1,6 @@
 package com.foldor.wordclock;
 
-import java.util.Date;
+import java.util.Calendar;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -207,22 +207,22 @@ public class WordClockReceiver extends AppWidgetProvider {
      * Format: It's One O'Six in the Morning
      */
     private static String getTime() {
-        Date now = new Date();
+        Calendar now = Calendar.getInstance();
         String time;
         
         //HOURS
-        int apphours = now.getHours() % 12; //Get this in a twelve hour format.
+        int apphours = now.get(Calendar.HOUR_OF_DAY) % 12; //Get this in a twelve hour format.
         if (apphours == 0) apphours = 12; //If it's zero then it's midnight or noon.
             
         //MINUTES
-        int appminutes = now.getMinutes();
+        int appminutes = now.get(Calendar.MINUTE);
         
         //TIME
         time = "It's " + NumberToWords.get(apphours) + " ";
         if (appminutes < 10 && appminutes != 0) time += "O'"; //Add O' to the minutes if it's less than 10, but not zero.
         time += NumberToWords.get(appminutes);
         time += " in the ";
-        time += (now.getHours() >= 12) ? "Afternoon" : "Morning";
+        time += (now.get(Calendar.HOUR_OF_DAY) >= 12) ? "Afternoon" : "Morning";
         
         return time;
     }
