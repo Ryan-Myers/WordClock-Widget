@@ -34,16 +34,6 @@ public class WordClockReceiver extends AppWidgetProvider {
         sIntentFilter.addAction(Intent.ACTION_TIME_CHANGED);
     }
     
-    /**
-     * Registers the mTimeChangedReceiver function with the sIntentFilter for changing the time.
-     * {@inheritDoc}
-     */
-    @Override
-    public void onEnabled(Context context) {
-        context.startService(new Intent(context, UpdateService.class));
-        super.onEnabled(context);
-    }
-    
     @Override
     public void onDisabled(Context context) {
         context.stopService(new Intent(context, UpdateService.class));
@@ -51,11 +41,16 @@ public class WordClockReceiver extends AppWidgetProvider {
     }
     
     /**
+     * Registers the mTimeChangedReceiver function with the sIntentFilter for changing the time.
      * Updates the widget with the current time.
+     * This is called when the widget is first added.
      * {@inheritDoc}
      */
     @Override
     public void onUpdate(Context context, AppWidgetManager appWM, int[] appWidgetIds) {
+        //Start the service. This can be called as many times as you want.
+        context.startService(new Intent(context, UpdateService.class));
+        
         updateAppWidget(context, appWM, appWidgetIds);
         super.onUpdate(context, appWM, appWidgetIds);
     }

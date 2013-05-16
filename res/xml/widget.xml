@@ -2,4 +2,5 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="294dp"
     android:minHeight="72dp"
-    android:initialLayout="@layout/main" android:configure="com.foldor.wordclock.Preferences"/>
+    android:initialLayout="@layout/main"
+    android:widgetCategory="home_screen|keyguard" android:resizeMode="horizontal|vertical"/>

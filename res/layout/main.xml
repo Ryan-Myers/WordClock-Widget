@@ -3,10 +3,10 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     <TextView  
-          android:id="@+id/wordclock"
+        android:id="@+id/wordclock"
         android:layout_width="fill_parent"
         android:text="@string/hello"
-           android:layout_height="wrap_content"
-           android:textSize="30sp"
-           android:textColor="#FFFFFF"/>
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:textColor="#FFFFFF"/>
 </FrameLayout>
