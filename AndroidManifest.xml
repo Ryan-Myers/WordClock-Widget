@@ -15,7 +15,7 @@
         </receiver>
         <activity android:name=".Preferences" android:exported="true">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"></action>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
         <service android:label=".UpdateService" android:name=".WordClockReceiver$UpdateService" android:exported="false">

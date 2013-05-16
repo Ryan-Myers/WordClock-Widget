@@ -5,12 +5,12 @@ package com.foldor.wordclock;
  * Use: NumberToWords.get(int)
  *
  */
-public class NumberToWords {
+class NumberToWords {
     private static final String[] ONES = { "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine" };
     private static final String[] TEENS = { "Ten", "Eleven", "Twelve", "Thirteen", null, "Fifteen", null, null, "Eighteen", null };
     private static final String[] TENS = {null, null, "Twenty", "Thirty", "Forty", "Fifty", "Sixty"};
 
-    public static String numberToWords(int number) {
+    private static String numberToWords(int number) {
         if (number < 10) {
             return ONES[number];
         } 
@@ -30,7 +30,7 @@ public class NumberToWords {
     /**
      * Pass an integer from 0-69 and get the English representation returned.
      */
-    public static final String get(int Num) {
+    public static String get(int Num) {
         return numberToWords(Num);
     }
 }

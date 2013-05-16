@@ -67,16 +67,20 @@ public class WordClockReceiver extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
-        
-        if (action.equals(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE) || 
-            action.equals(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_ENABLED)) {
-            
-            AppWidgetManager appWM = AppWidgetManager.getInstance(context);
-            
-            //Update the Widget text.
-            updateAppWidget(context, appWM, appWM.getAppWidgetIds(intent.getComponent()));
+
+        if (action != null) {
+            if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE) ||
+                action.equals(AppWidgetManager.ACTION_APPWIDGET_ENABLED)) {
+
+                AppWidgetManager appWM = AppWidgetManager.getInstance(context);
+
+                //Update the Widget text.
+                if (appWM != null) {
+                    updateAppWidget(context, appWM, appWM.getAppWidgetIds(intent.getComponent()));
+                }
+            }
         }
-        
+
         super.onReceive(context, intent);
     }
     
@@ -86,7 +90,7 @@ public class WordClockReceiver extends AppWidgetProvider {
      * @param appWM
      * @param appWidgetIds
      */
-    public static void updateAppWidget(Context context, AppWidgetManager appWM, int[] appWidgetIds) {
+    private static void updateAppWidget(Context context, AppWidgetManager appWM, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWM, appWidgetId);
         }
@@ -95,10 +99,10 @@ public class WordClockReceiver extends AppWidgetProvider {
     /**
      * This will update the passed widget view with the current time in English.
      * @param context
-     * @param appWidgetManager
+     * @param appWM
      * @param appWidgetId
      */
-    public static void updateAppWidget(Context context, AppWidgetManager appWM, int appWidgetId) {
+    private static void updateAppWidget(Context context, AppWidgetManager appWM, int appWidgetId) {
         RemoteViews views = buildAppWidget(context, appWM, appWidgetId);
         
         if (views != null) {
@@ -112,11 +116,11 @@ public class WordClockReceiver extends AppWidgetProvider {
     /**
      * This will creates the view with the current time in English, and set up the onClick activity for launching the Preferences Activity.
      * @param context
-     * @param appWidgetManager
+     * @param appWM
      * @param appWidgetId
      * @return An updated view of the widget.
      */
-    protected static RemoteViews buildAppWidget(Context context, AppWidgetManager appWM, int appWidgetId) {
+    private static RemoteViews buildAppWidget(Context context, AppWidgetManager appWM, int appWidgetId) {
         //Checks to see if the layout has changed from the default.
         AppWidgetProviderInfo providerInfo = appWM.getAppWidgetInfo(appWidgetId);
         int layoutId = (providerInfo == null) ? R.layout.main : providerInfo.initialLayout;
@@ -188,21 +192,21 @@ public class WordClockReceiver extends AppWidgetProvider {
         }
         
         /**
-         * Unregister the mTimeChangedReceiver when the widget is deleted.
+         * Un-register the mTimeChangedReceiver when the widget is deleted.
          */
         @Override
         public void onDestroy() {
             unregisterReceiver(mTimeChangedReceiver);
             super.onDestroy();
         }
-    };
+    }
     
     /**
      * Gets the time in English
      * Format: It's Twelve Thirty-Six in the Afternoon
      * Format: It's One O'Six in the Morning
      */
-    public static String getTime() {
+    private static String getTime() {
         Date now = new Date();
         String time;
         

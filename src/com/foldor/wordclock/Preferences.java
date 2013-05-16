@@ -10,7 +10,7 @@ import android.view.KeyEvent;
 
 public class Preferences extends PreferenceActivity {
     private static final String TAG = "WordClock";
-    private static String CONFIGURE_ACTION = "android.appwidget.action.APPWIDGET_CONFIGURE";
+    private static final String CONFIGURE_ACTION = "android.appwidget.action.APPWIDGET_CONFIGURE";
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
