@@ -1,0 +1,1 @@
+C:\Users\Ryan\AndroidStudioProjects\WordClock-Widget\app\build\intermediates\classes\debug
