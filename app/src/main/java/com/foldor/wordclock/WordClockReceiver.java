@@ -126,10 +126,29 @@ public class WordClockReceiver extends AppWidgetProvider {
         
         //Grab the FontColor Shared Preference and use it to update the font color of the textview.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        //String FontColor = prefs.getString("FontColor", "#FFFFFF");
+
+        Integer FontColor;
+
+        try {
+            FontColor = prefs.getInt("FontColor", R.integer.FontColorDefault);
+        }
+        catch (java.lang.ClassCastException ex) {
+            //This happens when trying to convert a string to an integer.
+            //This fix is in place to protect users of the old version with a string
+            //FontColor preference variable form crashing when switching to the new version.
+            Log.d(TAG, "FontColor was a string, trying to parse that.");
+            try {
+                FontColor = Color.parseColor(prefs.getString("FontColor", "#FFFFFF"));
+            }
+            catch (Exception ex2) {
+                //Just covering my ass in the event I was wrong somehow.
+                FontColor = R.integer.FontColorDefault;
+                Log.d(TAG, "Turns out FontColor wasn't a string. Defaulting -1");
+            }
+        }
         
-        views.setTextColor(R.id.wordclock, prefs.getInt("FontColor", R.integer.FontColorDefault));
-        
+        views.setTextColor(R.id.wordclock, FontColor);
+
         //Create the Intent to configure preferences.
         Intent prefsIntent = new Intent(context, Preferences.class);
         prefsIntent.setAction("android.appwidget.action.APPWIDGET_CONFIGURE");
