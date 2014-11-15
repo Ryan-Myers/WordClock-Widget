@@ -1,3 +1,3 @@
 [submodule "libs/Android-Color-Picker"]
 	path = libs/Android-Color-Picker
-	url = https://github.com/rhodey/Android-Color-Picker
+	url = https://github.com/rhodey/Android-Color-Picker.git
