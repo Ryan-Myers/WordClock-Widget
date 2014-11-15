@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.foldor.wordclock"
-        minSdkVersion 4
+        minSdkVersion 8
         targetSdkVersion 21
     }
 
@@ -16,4 +16,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+}
+
+dependencies {
+    compile project(':libs:Android-Color-Picker:library')
 }

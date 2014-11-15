@@ -1,7 +1,5 @@
 package com.foldor.wordclock;
 
-import java.util.Calendar;
-
 import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
@@ -18,6 +16,8 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
+
+import java.util.Calendar;
 
 public class WordClockReceiver extends AppWidgetProvider {
     private static final String TAG = "WordClock";
@@ -126,9 +126,9 @@ public class WordClockReceiver extends AppWidgetProvider {
         
         //Grab the FontColor Shared Preference and use it to update the font color of the textview.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String FontColor = prefs.getString("FontColor", "#FFFFFF");
+        //String FontColor = prefs.getString("FontColor", "#FFFFFF");
         
-        views.setTextColor(R.id.wordclock, Color.parseColor(FontColor));
+        views.setTextColor(R.id.wordclock, prefs.getInt("FontColor", R.integer.FontColorDefault));
         
         //Create the Intent to configure preferences.
         Intent prefsIntent = new Intent(context, Preferences.class);
