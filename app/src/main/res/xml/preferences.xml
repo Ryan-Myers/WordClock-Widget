@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference android:entryValues="@array/ColourValues"
+                    android:entries="@array/ColourNames"
+                    android:title="Font Colour" 
+                    android:summary="Choose the colour of the font used."
+                    android:key="FontColor"
+                    android:defaultValue="@string/FontColor">
+    </ListPreference>
+</PreferenceScreen>
